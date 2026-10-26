@@ -1,0 +1,12 @@
+﻿.env
+.env.*
+!.env.example
+
+.vs/
+*.suo
+*.user
+
+bin/
+obj/
+
+My Project/PublishProfiles/
