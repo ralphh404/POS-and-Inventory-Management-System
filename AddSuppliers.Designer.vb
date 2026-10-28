@@ -248,7 +248,7 @@ Partial Class AddSuppliers
         MinimizeBox = False
         Name = "AddSuppliers"
         StartPosition = FormStartPosition.CenterScreen
-        Text = "Medent+"
+        Text = "User"
         Panel2.ResumeLayout(False)
         Panel2.PerformLayout()
         Panel3.ResumeLayout(False)

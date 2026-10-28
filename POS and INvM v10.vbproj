@@ -3,11 +3,13 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <RootNamespace>POS_and_INvM_Medent__v2</RootNamespace>
+    <RootNamespace>POS_and_INvM_v10</RootNamespace>
     <StartupObject>Sub Main</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
     <MyType>WindowsForms</MyType>
+	<ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
     <ReferencePath>C:\Program Files (x86)\SAP BusinessObjects\Crystal Reports for .NET Framework 4.0\Common\SAP BusinessObjects Enterprise XI 4.0\win64_x64\dotnet\</ReferencePath>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,11 +32,7 @@
     <PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="MySql.Data">
-      <HintPath>..\POS and Inventory System Medent+ v1\bin\Debug\net7.0-windows\MySql.Data.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+  
 
   <ItemGroup>
     <Compile Update="My Project\Application.Designer.vb">

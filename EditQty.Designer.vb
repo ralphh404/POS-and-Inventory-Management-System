@@ -102,7 +102,7 @@ Partial Class EditQty
         MinimizeBox = False
         Name = "EditQty"
         StartPosition = FormStartPosition.CenterScreen
-        Text = "Medent+"
+        Text = "User"
         Panel1.ResumeLayout(False)
         Panel1.PerformLayout()
         ResumeLayout(False)

@@ -292,7 +292,7 @@ Partial Class InventoryPOS
         MinimizeBox = False
         Name = "InventoryPOS"
         StartPosition = FormStartPosition.CenterScreen
-        Text = "Medent+"
+        Text = "User"
         WindowState = FormWindowState.Maximized
         Panel1.ResumeLayout(False)
         submenupanel.ResumeLayout(False)

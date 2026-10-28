@@ -169,7 +169,7 @@ Partial Class EditStock
         MinimizeBox = False
         Name = "EditStock"
         StartPosition = FormStartPosition.CenterScreen
-        Text = "Medent+"
+        Text = "User"
         Panel1.ResumeLayout(False)
         Panel1.PerformLayout()
         Panel2.ResumeLayout(False)

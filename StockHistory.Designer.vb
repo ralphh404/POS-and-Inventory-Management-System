@@ -192,7 +192,7 @@ Partial Class StockHistory
         MinimizeBox = False
         Name = "StockHistory"
         StartPosition = FormStartPosition.CenterScreen
-        Text = "Medent+"
+        Text = "User"
         Panel1.ResumeLayout(False)
         Panel1.PerformLayout()
         Panel2.ResumeLayout(False)

@@ -313,7 +313,7 @@ Partial Class frmInterface
         MinimizeBox = False
         Name = "frmInterface"
         StartPosition = FormStartPosition.CenterScreen
-        Text = "Medent+"
+        Text = "User"
         WindowState = FormWindowState.Maximized
         Panel1.ResumeLayout(False)
         Panel2.ResumeLayout(False)

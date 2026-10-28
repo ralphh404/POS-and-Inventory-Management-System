@@ -182,7 +182,7 @@ Partial Class PasswordCh
         MinimizeBox = False
         Name = "PasswordCh"
         StartPosition = FormStartPosition.CenterScreen
-        Text = "Medent+"
+        Text = "User"
         Panel1.ResumeLayout(False)
         Panel1.PerformLayout()
         Panel3.ResumeLayout(False)

@@ -198,7 +198,7 @@ Public Class SaleRep
 
                                                                 ' === HEADER ===
                                                                 page.Header().Column(Sub(h)
-                                                                                         h.Item().AlignCenter().Text("MEDENT+ SALES REPORT").FontSize(16).Bold()
+                                                                                         h.Item().AlignCenter().Text("COMPANY 1 SALES REPORT").FontSize(16).Bold()
                                                                                          h.Item().AlignCenter().Text($"({fromDateStr} - {toDateStr})").FontSize(11)
                                                                                          h.Item().PaddingVertical(6).LineHorizontal(1)
                                                                                      End Sub)

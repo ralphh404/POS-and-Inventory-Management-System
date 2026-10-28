@@ -172,7 +172,7 @@ Partial Class Payment
         MinimizeBox = False
         Name = "Payment"
         StartPosition = FormStartPosition.CenterScreen
-        Text = "Medent+"
+        Text = "User"
         Panel1.ResumeLayout(False)
         Panel1.PerformLayout()
         Panel2.ResumeLayout(False)

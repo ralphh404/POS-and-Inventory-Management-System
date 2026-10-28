@@ -283,7 +283,7 @@ Partial Class SaleRep
         Controls.Add(Panel1)
         FormBorderStyle = FormBorderStyle.None
         Name = "SaleRep"
-        Text = "Medent+"
+        Text = "User"
         WindowState = FormWindowState.Maximized
         Panel1.ResumeLayout(False)
         Panel1.PerformLayout()

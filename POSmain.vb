@@ -346,7 +346,7 @@ Public Class POSmain
         Dim rightFormat As New StringFormat() With {.Alignment = StringAlignment.Far}
 
         ' ===== HEADER =====
-        e.Graphics.DrawString("MEDENT+", title, Brushes.Black, centerX, y, centerFormat)
+        e.Graphics.DrawString("COMPANY 1", title, Brushes.Black, centerX, y, centerFormat)
         y += 18
 
         e.Graphics.DrawString("OFFICIAL RECEIPT", bold, Brushes.Black, centerX, y, centerFormat)
