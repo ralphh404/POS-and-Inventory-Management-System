@@ -23,19 +23,20 @@ Partial Class IntArch
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle5 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle6 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Panel1 = New Panel()
+        Label4 = New Label()
         lblActiveDate3 = New Label()
         lblUsername3 = New Label()
         lblActiveTime3 = New Label()
+        btnJohn = New Button()
         btnRestore = New Button()
         Panel2 = New Panel()
         panelArch = New Panel()
         dbArch = New DataGridView()
         TimerDateTime3 = New Timer(components)
-        Label4 = New Label()
         Panel1.SuspendLayout()
         panelArch.SuspendLayout()
         CType(dbArch, ComponentModel.ISupportInitialize).BeginInit()
@@ -48,12 +49,24 @@ Partial Class IntArch
         Panel1.Controls.Add(lblActiveDate3)
         Panel1.Controls.Add(lblUsername3)
         Panel1.Controls.Add(lblActiveTime3)
+        Panel1.Controls.Add(btnJohn)
         Panel1.Controls.Add(btnRestore)
         Panel1.Dock = DockStyle.Top
         Panel1.Location = New Point(0, 0)
         Panel1.Name = "Panel1"
         Panel1.Size = New Size(1378, 164)
         Panel1.TabIndex = 7
+        ' 
+        ' Label4
+        ' 
+        Label4.AutoSize = True
+        Label4.Font = New Font("Century Gothic", 16F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label4.ForeColor = Color.White
+        Label4.Location = New Point(592, 20)
+        Label4.Name = "Label4"
+        Label4.Size = New Size(155, 38)
+        Label4.TabIndex = 12
+        Label4.Text = "ARCHIVE"
         ' 
         ' lblActiveDate3
         ' 
@@ -87,6 +100,21 @@ Partial Class IntArch
         lblActiveTime3.Size = New Size(76, 23)
         lblActiveTime3.TabIndex = 11
         lblActiveTime3.Text = "Label1"
+        ' 
+        ' btnJohn
+        ' 
+        btnJohn.BackColor = Color.Firebrick
+        btnJohn.FlatAppearance.BorderColor = Color.Silver
+        btnJohn.FlatStyle = FlatStyle.Flat
+        btnJohn.Font = New Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        btnJohn.ForeColor = SystemColors.ControlLightLight
+        btnJohn.Location = New Point(468, 103)
+        btnJohn.Margin = New Padding(0)
+        btnJohn.Name = "btnJohn"
+        btnJohn.Size = New Size(114, 39)
+        btnJohn.TabIndex = 1
+        btnJohn.Text = "DELETE"
+        btnJohn.UseVisualStyleBackColor = False
         ' 
         ' btnRestore
         ' 
@@ -128,30 +156,30 @@ Partial Class IntArch
         dbArch.AllowUserToDeleteRows = False
         dbArch.AllowUserToResizeColumns = False
         dbArch.AllowUserToResizeRows = False
-        DataGridViewCellStyle4.BackColor = Color.WhiteSmoke
-        dbArch.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle4
+        DataGridViewCellStyle1.BackColor = Color.WhiteSmoke
+        dbArch.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         dbArch.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         dbArch.BackgroundColor = Color.LightSteelBlue
         dbArch.BorderStyle = BorderStyle.None
         dbArch.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal
         dbArch.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single
-        DataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle5.BackColor = Color.LightSlateGray
-        DataGridViewCellStyle5.Font = New Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        DataGridViewCellStyle5.ForeColor = Color.WhiteSmoke
-        DataGridViewCellStyle5.SelectionBackColor = Color.SlateGray
-        DataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle5.WrapMode = DataGridViewTriState.True
-        dbArch.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle5
+        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle2.BackColor = Color.LightSlateGray
+        DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle2.ForeColor = Color.WhiteSmoke
+        DataGridViewCellStyle2.SelectionBackColor = Color.SlateGray
+        DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle2.WrapMode = DataGridViewTriState.True
+        dbArch.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
         dbArch.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle6.BackColor = SystemColors.Window
-        DataGridViewCellStyle6.Font = New Font("Century Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
-        DataGridViewCellStyle6.ForeColor = SystemColors.ControlText
-        DataGridViewCellStyle6.SelectionBackColor = Color.LightGray
-        DataGridViewCellStyle6.SelectionForeColor = Color.Black
-        DataGridViewCellStyle6.WrapMode = DataGridViewTriState.False
-        dbArch.DefaultCellStyle = DataGridViewCellStyle6
+        DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle3.BackColor = SystemColors.Window
+        DataGridViewCellStyle3.Font = New Font("Century Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle3.ForeColor = SystemColors.ControlText
+        DataGridViewCellStyle3.SelectionBackColor = Color.LightGray
+        DataGridViewCellStyle3.SelectionForeColor = Color.Black
+        DataGridViewCellStyle3.WrapMode = DataGridViewTriState.False
+        dbArch.DefaultCellStyle = DataGridViewCellStyle3
         dbArch.Dock = DockStyle.Fill
         dbArch.EnableHeadersVisualStyles = False
         dbArch.GridColor = Color.Gainsboro
@@ -169,17 +197,6 @@ Partial Class IntArch
         ' 
         TimerDateTime3.Enabled = True
         TimerDateTime3.Interval = 1000
-        ' 
-        ' Label4
-        ' 
-        Label4.AutoSize = True
-        Label4.Font = New Font("Century Gothic", 16F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label4.ForeColor = Color.White
-        Label4.Location = New Point(592, 20)
-        Label4.Name = "Label4"
-        Label4.Size = New Size(155, 38)
-        Label4.TabIndex = 12
-        Label4.Text = "ARCHIVE"
         ' 
         ' IntArch
         ' 
@@ -209,4 +226,5 @@ Partial Class IntArch
     Friend WithEvents lblActiveTime3 As Label
     Friend WithEvents TimerDateTime3 As Timer
     Friend WithEvents Label4 As Label
+    Friend WithEvents btnJohn As Button
 End Class

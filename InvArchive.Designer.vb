@@ -38,6 +38,8 @@ Partial Class InvArchive
         lblUsername66 = New Label()
         lblActiveTime66 = New Label()
         Label1 = New Label()
+        btnDelSp = New Button()
+        btnDelPr = New Button()
         btnRestoreSp = New Button()
         btnRestorePr = New Button()
         btnSupAc = New Button()
@@ -66,10 +68,12 @@ Partial Class InvArchive
         Panel1.Controls.Add(lblUsername66)
         Panel1.Controls.Add(lblActiveTime66)
         Panel1.Controls.Add(Label1)
+        Panel1.Controls.Add(btnDelPr)
         Panel1.Controls.Add(btnRestoreSp)
         Panel1.Controls.Add(btnRestorePr)
         Panel1.Controls.Add(btnSupAc)
         Panel1.Controls.Add(btnProdAc)
+        Panel1.Controls.Add(btnDelSp)
         Panel1.Dock = DockStyle.Top
         Panel1.Location = New Point(0, 0)
         Panel1.Name = "Panel1"
@@ -181,6 +185,36 @@ Partial Class InvArchive
         Label1.Size = New Size(155, 38)
         Label1.TabIndex = 8
         Label1.Text = "ARCHIVE"
+        ' 
+        ' btnDelSp
+        ' 
+        btnDelSp.BackColor = Color.DarkRed
+        btnDelSp.FlatAppearance.BorderColor = Color.Silver
+        btnDelSp.FlatStyle = FlatStyle.Flat
+        btnDelSp.Font = New Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        btnDelSp.ForeColor = SystemColors.ControlLightLight
+        btnDelSp.Location = New Point(712, 116)
+        btnDelSp.Margin = New Padding(0)
+        btnDelSp.Name = "btnDelSp"
+        btnDelSp.Size = New Size(114, 39)
+        btnDelSp.TabIndex = 6
+        btnDelSp.Text = "DELETE"
+        btnDelSp.UseVisualStyleBackColor = False
+        ' 
+        ' btnDelPr
+        ' 
+        btnDelPr.BackColor = Color.Firebrick
+        btnDelPr.FlatAppearance.BorderColor = Color.Silver
+        btnDelPr.FlatStyle = FlatStyle.Flat
+        btnDelPr.Font = New Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        btnDelPr.ForeColor = SystemColors.ControlLightLight
+        btnDelPr.Location = New Point(712, 116)
+        btnDelPr.Margin = New Padding(0)
+        btnDelPr.Name = "btnDelPr"
+        btnDelPr.Size = New Size(114, 39)
+        btnDelPr.TabIndex = 6
+        btnDelPr.Text = "DELETE"
+        btnDelPr.UseVisualStyleBackColor = False
         ' 
         ' btnRestoreSp
         ' 
@@ -392,4 +426,6 @@ Partial Class InvArchive
     Friend WithEvents PanelSu As Panel
     Friend WithEvents lblCls As Label
     Friend WithEvents txtSupp As TextBox
+    Friend WithEvents btnDelPr As Button
+    Friend WithEvents btnDelSp As Button
 End Class

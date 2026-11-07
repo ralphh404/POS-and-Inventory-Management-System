@@ -350,6 +350,146 @@ Public Class InvArchive
         End If
     End Sub
 
+    Private Sub btnDelPr_Click(sender As Object, e As EventArgs) Handles btnDelPr.Click
+
+        ' 1. Check if a product is selected
+        If dbArcProducts.SelectedRows.Count = 0 Then
+            MessageBox.Show("Please select a product to permanently delete.",
+                        "No Selection",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information)
+            Exit Sub
+        End If
+
+        ' 2. Get selected product information
+        Dim row As DataGridViewRow = dbArcProducts.SelectedRows(0)
+
+        Dim productId As Integer =
+        Convert.ToInt32(row.Cells("ProductID").Value)
+
+        Dim productName As String =
+        row.Cells("ProductName").Value.ToString()
+
+        ' 3. Confirm permanent deletion
+        If MessageBox.Show(
+        "Are you sure you want to permanently delete '" &
+        productName & "'?" & Environment.NewLine & Environment.NewLine &
+        "This action cannot be undone.",
+        "Confirm Permanent Deletion",
+        MessageBoxButtons.YesNo,
+        MessageBoxIcon.Warning) <> DialogResult.Yes Then
+
+            Exit Sub
+        End If
+
+        Dim openedHere As Boolean = False
+
+        Try
+            ' 4. Open database connection if necessary
+            If conn.State = ConnectionState.Closed Then
+                conn.Open()
+                openedHere = True
+            End If
+
+            ' 5. Start transaction
+            Using transaction As MySqlTransaction = conn.BeginTransaction()
+
+                Try
+
+                    ' 6. Check existing product references
+                    Dim checkQuery As String = "
+                    SELECT
+                        (SELECT COUNT(*) FROM sales_items
+                         WHERE ProductID = @ProductID) +
+
+                        (SELECT COUNT(*) FROM stock_in1
+                         WHERE ProductID = @ProductID) +
+
+                        (SELECT COUNT(*) FROM pending_items
+                         WHERE ProductID = @ProductID)
+                "
+
+                    Using checkCmd As New MySqlCommand(checkQuery, conn, transaction)
+
+                        checkCmd.Parameters.AddWithValue("@ProductID", productId)
+
+                        Dim references As Long =
+                        Convert.ToInt64(checkCmd.ExecuteScalar())
+
+                        If references > 0 Then
+                            Throw New Exception(
+                            "This product cannot be permanently deleted " &
+                            "because it has existing transaction records." &
+                            Environment.NewLine & Environment.NewLine &
+                            "Sales, stock-in, or pending records were found.")
+                        End If
+
+                    End Using
+
+                    ' 7. Delete only if the product is still archived
+                    Dim deleteQuery As String = "
+                    DELETE FROM products1
+                    WHERE ProductID = @ProductID
+                    AND IsArchived = TRUE
+                "
+
+                    Using deleteCmd As New MySqlCommand(deleteQuery, conn, transaction)
+
+                        deleteCmd.Parameters.AddWithValue("@ProductID", productId)
+
+                        Dim affectedRows As Integer =
+                        deleteCmd.ExecuteNonQuery()
+
+                        If affectedRows = 0 Then
+                            Throw New Exception(
+                            "Product could not be deleted. " &
+                            "It may no longer be archived.")
+                        End If
+
+                    End Using
+
+                    ' 8. Commit successful deletion
+                    transaction.Commit()
+
+                Catch
+                    transaction.Rollback()
+                    Throw
+                End Try
+
+            End Using
+
+            ' 9. Display success message
+            MessageBox.Show(
+            "Product '" & productName &
+            "' has been permanently deleted.",
+            "Deletion Successful",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Information)
+
+            ' 10. Refresh archived products
+            LoadArchivedProducts()
+
+        Catch ex As Exception
+
+            MessageBox.Show(
+            "Unable to permanently delete product:" &
+            Environment.NewLine & Environment.NewLine &
+            ex.Message,
+            "Deletion Error",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Error)
+
+        Finally
+
+            ' 11. Close connection only if opened here
+            If openedHere AndAlso conn.State = ConnectionState.Open Then
+                conn.Close()
+            End If
+
+        End Try
+
+    End Sub
+
     Private Sub btnProdAc_Click(sender As Object, e As EventArgs) Handles btnProdAc.Click
         panelArcProducts.Visible = True
         panelSuppAC.Visible = False
@@ -359,6 +499,9 @@ Public Class InvArchive
 
         btnRestorePr.Visible = True
         btnRestoreSp.Visible = False
+
+        btnDelPr.Visible = True
+        btnDelSp.Visible = False
 
         PanelPo.Visible = True
         PanelSu.Visible = False
@@ -373,6 +516,9 @@ Public Class InvArchive
 
         btnRestoreSp.Visible = True
         btnRestorePr.Visible = False
+
+        btnDelSp.Visible = True
+        btnDelPr.Visible = False
 
         PanelSu.Visible = True
         PanelPo.Visible = False
@@ -393,9 +539,9 @@ Public Class InvArchive
                 If conn.State = ConnectionState.Closed Then conn.Open()
 
                 For Each row As DataGridViewRow In dbSupplierArc.SelectedRows
-                    Dim supplierId As Integer = Convert.ToInt32(row.Cells("SupplierID").Value)
+                    Dim supplierId = Convert.ToInt32(row.Cells("SupplierID").Value)
 
-                    Dim query As String = "UPDATE suppliers1 SET is_Archived = FALSE WHERE SupplierID = @SupplierID"
+                    Dim query = "UPDATE suppliers1 SET is_Archived = FALSE WHERE SupplierID = @SupplierID"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@SupplierID", supplierId)
                         cmd.ExecuteNonQuery()
@@ -411,6 +557,140 @@ Public Class InvArchive
                 If conn.State = ConnectionState.Open Then conn.Close()
             End Try
         End If
+    End Sub
+
+    Private Sub btnDelSp_Click(sender As Object, e As EventArgs) Handles btnDelSp.Click
+
+        ' 1. Check if a supplier is selected
+        If dbSupplierArc.SelectedRows.Count = 0 Then
+            MessageBox.Show("Please select a supplier to permanently delete.",
+                            "No Selection",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information)
+            Exit Sub
+        End If
+
+        ' 2. Get selected supplier information
+        Dim row As DataGridViewRow = dbSupplierArc.SelectedRows(0)
+
+        Dim supplierId As Integer =
+            Convert.ToInt32(row.Cells("SupplierID").Value)
+
+        Dim supplierName As String =
+            row.Cells("SupplierName").Value.ToString()
+
+        ' 3. Confirm permanent deletion
+        If MessageBox.Show(
+            "Are you sure you want to permanently delete '" &
+            supplierName & "'?" & Environment.NewLine & Environment.NewLine &
+            "This action cannot be undone.",
+            "Confirm Permanent Deletion",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Warning) <> DialogResult.Yes Then
+
+            Exit Sub
+        End If
+
+        Dim openedHere As Boolean = False
+
+        Try
+            ' 4. Open database connection if necessary
+            If conn.State = ConnectionState.Closed Then
+                conn.Open()
+                openedHere = True
+            End If
+
+            ' 5. Start database transaction
+            Using transaction As MySqlTransaction = conn.BeginTransaction()
+
+                Try
+
+                    ' 6. Check existing stock-in records
+                    Dim checkQuery As String = "
+                    SELECT COUNT(*)
+                    FROM stock_in1
+                    WHERE SupplierID = @SupplierID
+                "
+
+                    Using checkCmd As New MySqlCommand(checkQuery, conn, transaction)
+
+                        checkCmd.Parameters.AddWithValue("@SupplierID", supplierId)
+
+                        Dim references As Long =
+                            Convert.ToInt64(checkCmd.ExecuteScalar())
+
+                        If references > 0 Then
+                            Throw New Exception(
+                                "This supplier has existing stock-in records." &
+                                Environment.NewLine & Environment.NewLine &
+                                "Permanent deletion is not allowed to preserve " &
+                                "supplier transaction history.")
+                        End If
+
+                    End Using
+
+                    ' 7. Delete only if the supplier is still archived
+                    Dim deleteQuery As String = "
+                    DELETE FROM suppliers1
+                    WHERE SupplierID = @SupplierID
+                    AND is_Archived = TRUE
+                "
+
+                    Using deleteCmd As New MySqlCommand(deleteQuery, conn, transaction)
+
+                        deleteCmd.Parameters.AddWithValue("@SupplierID", supplierId)
+
+                        Dim affectedRows As Integer =
+                            deleteCmd.ExecuteNonQuery()
+
+                        If affectedRows = 0 Then
+                            Throw New Exception(
+                                "Supplier could not be deleted. " &
+                                "It may no longer be archived.")
+                        End If
+
+                    End Using
+
+                    ' 8. Commit successful deletion
+                    transaction.Commit()
+
+                Catch
+                    transaction.Rollback()
+                    Throw
+                End Try
+
+            End Using
+
+            ' 9. Display success message
+            MessageBox.Show(
+                "Supplier '" & supplierName &
+                "' has been permanently deleted.",
+                "Deletion Successful",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information)
+
+            ' 10. Refresh archived suppliers
+            LoadArchivedSuppliers()
+
+        Catch ex As Exception
+
+            MessageBox.Show(
+                "Unable to permanently delete supplier:" &
+                Environment.NewLine & Environment.NewLine &
+                ex.Message,
+                "Deletion Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error)
+
+        Finally
+
+            ' 11. Close connection only if opened here
+            If openedHere AndAlso conn.State = ConnectionState.Open Then
+                conn.Close()
+            End If
+
+        End Try
+
     End Sub
 
 End Class

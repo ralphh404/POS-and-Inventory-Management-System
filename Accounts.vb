@@ -183,6 +183,23 @@ Public Class frmAccounts
             Return
         End If
 
+        ' Prevent archiving the currently logged-in account
+        Dim selectedUsername As String =
+        dbAccounts.SelectedRows(0).Cells("Username").Value?.ToString()
+
+        If String.Equals(selectedUsername,
+                      frmInterface.loggedInUsername,
+                      StringComparison.OrdinalIgnoreCase) Then
+
+            MessageBox.Show(
+            "You cannot archive the account currently logged in.",
+            "Action Not Allowed",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning)
+
+            Return
+        End If
+
         Dim result As DialogResult = MessageBox.Show("Are you sure you want to archive this account?", "Confirm Archive", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
         If result = DialogResult.Yes Then
