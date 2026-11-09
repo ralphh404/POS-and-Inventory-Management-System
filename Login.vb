@@ -2,6 +2,7 @@
 Public Class frmLogin
     Private Sub frmLogin_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         InitializeDatabase()
+        CheckFirstAccount()
         ' Placeholder defaults
         txtUsername.Text = "Username"
         txtUsername.ForeColor = Color.DarkGray
@@ -43,6 +44,35 @@ Public Class frmLogin
         Dim regionPath As New Drawing2D.GraphicsPath()
         regionPath.AddEllipse(0, 0, diameter, diameter)
         pic.Region = New Region(regionPath)
+    End Sub
+
+    Private Sub CheckFirstAccount()
+
+        Try
+            If conn.State = ConnectionState.Open Then
+                conn.Close()
+            End If
+
+            conn.Open()
+
+            Dim query As String = "SELECT COUNT(*) FROM usersPOS"
+
+            Using cmd As New MySqlCommand(query, conn)
+                Dim accountCount As Integer = Convert.ToInt32(cmd.ExecuteScalar())
+
+                lblCreateAcc.Visible = (accountCount = 0)
+            End Using
+
+        Catch ex As Exception
+            lblCreateAcc.Visible = False
+            MessageBox.Show("Unable to check account availability: " & ex.Message)
+
+        Finally
+            If conn.State = ConnectionState.Open Then
+                conn.Close()
+            End If
+        End Try
+
     End Sub
 
     ' --- Username placeholder handling ---
@@ -122,54 +152,127 @@ Public Class frmLogin
 
     ' --- Login logic ---
     Private Sub btnLogin_Click(sender As Object, e As EventArgs) Handles btnLogin.Click
+
         Try
-            ' Validate before querying database
-            If txtUsername.Text = "" OrElse txtUsername.Text = "Username" Then
-                MessageBox.Show("Please enter a valid username.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            If String.IsNullOrWhiteSpace(txtUsername.Text) OrElse
+               txtUsername.Text = "Username" Then
+
+                MessageBox.Show("Please enter a valid username.")
                 txtUsername.Focus()
                 Exit Sub
             End If
 
-            If txtPassword.Text = "" OrElse txtPassword.Text = "Password" Then
-                MessageBox.Show("Please enter a valid password.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            If String.IsNullOrWhiteSpace(txtPassword.Text) OrElse
+               txtPassword.Text = "Password" Then
+
+                MessageBox.Show("Please enter a valid password.")
                 txtPassword.Focus()
                 Exit Sub
             End If
 
             conn.Open()
-            Dim cmd As New MySqlCommand("SELECT * FROM usersPOS WHERE Username=@username AND Password=@password AND is_Archived=0", conn)
-            cmd.Parameters.AddWithValue("@username", txtUsername.Text)
-            cmd.Parameters.AddWithValue("@password", txtPassword.Text)
 
-            Dim dr As MySqlDataReader = cmd.ExecuteReader()
+            Dim storedPassword As String = ""
+            Dim accountFound As Boolean = False
 
-            If dr.Read() Then
-                ' Get user info
-                frmInterface.loggedInUsername = dr("Username").ToString()
-                frmInterface.loggedInType = dr("AccountType").ToString()
-                dr.Close()
+            Dim query As String = "SELECT Username, Password, AccountType " &
+                      "FROM usersPOS " &
+                      "WHERE BINARY Username = BINARY @username " &
+                      "AND is_Archived = 0 LIMIT 1"
 
-                ' Log successful login
-                Dim logCmd As New MySqlCommand("INSERT INTO log_historyPOS (Username, Action, LogTime, Details) VALUES (@username, @action, NOW(), @details)", conn)
-                logCmd.Parameters.AddWithValue("@username", frmInterface.loggedInUsername)
-                logCmd.Parameters.AddWithValue("@action", "Login")
-                logCmd.Parameters.AddWithValue("@details", "Login: " & frmInterface.loggedInType)
-                logCmd.ExecuteNonQuery()
+            Using cmd As New MySqlCommand(query, conn)
 
-                ' Open interface
-                Dim interfaceForm As New frmInterface()
-                interfaceForm.Show()
-                interfaceForm.LoadFormIntoPanel(New Dashboard())
-                Me.Hide()
-            Else
-                MessageBox.Show("Invalid username or password.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                cmd.Parameters.AddWithValue("@username", txtUsername.Text.Trim())
+
+                Using dr As MySqlDataReader = cmd.ExecuteReader()
+
+                    If dr.Read() Then
+                        accountFound = True
+
+                        frmInterface.loggedInUsername = dr("Username").ToString()
+                        frmInterface.loggedInType = dr("AccountType").ToString()
+
+                        storedPassword = dr("Password").ToString()
+                    End If
+
+                End Using
+            End Using
+
+            If Not accountFound OrElse
+               Not PasswordHelper.VerifyPassword(txtPassword.Text, storedPassword) Then
+
+                MessageBox.Show("Invalid username or password.",
+                                "Login Failed",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error)
+                Exit Sub
             End If
+
+            ' Automatically upgrade existing plaintext passwords
+            If Not PasswordHelper.IsBCryptHash(storedPassword) Then
+
+                Dim newHash As String =
+                    PasswordHelper.HashPassword(txtPassword.Text)
+
+                Using updateCmd As New MySqlCommand(
+                    "UPDATE usersPOS SET Password = @newpass " &
+                    "WHERE BINARY Username = BINARY @username AND Password = @oldpass", conn)
+
+                    updateCmd.Parameters.AddWithValue("@newpass", newHash)
+                    updateCmd.Parameters.AddWithValue("@username",
+                        frmInterface.loggedInUsername)
+                    updateCmd.Parameters.AddWithValue("@oldpass", storedPassword)
+
+                    updateCmd.ExecuteNonQuery()
+                End Using
+
+            End If
+
+            ' Record successful login
+            Using logCmd As New MySqlCommand(
+                "INSERT INTO log_historyPOS " &
+                "(Username, Action, LogTime, Details) " &
+                "VALUES (@username, @action, NOW(), @details)", conn)
+
+                logCmd.Parameters.AddWithValue("@username",
+                    frmInterface.loggedInUsername)
+
+                logCmd.Parameters.AddWithValue("@action", "Login")
+
+                logCmd.Parameters.AddWithValue("@details",
+                    "Login: " & frmInterface.loggedInType)
+
+                logCmd.ExecuteNonQuery()
+            End Using
+
+            Dim interfaceForm As New frmInterface()
+            interfaceForm.Show()
+            interfaceForm.LoadFormIntoPanel(New Dashboard())
+
+            Me.Hide()
 
         Catch ex As Exception
             MessageBox.Show("Error: " & ex.Message)
+
         Finally
-            conn.Close()
+            If conn.State = ConnectionState.Open Then
+                conn.Close()
+            End If
         End Try
+
     End Sub
 
+    Private Sub lblCreateAcc_Click(sender As Object, e As EventArgs) Handles lblCreateAcc.Click
+
+        Using registerForm As New AddPopUp()
+
+            registerForm.IsFirstAccountSetup = True
+
+            If registerForm.ShowDialog() = DialogResult.OK Then
+                CheckFirstAccount()
+            End If
+
+        End Using
+
+    End Sub
 End Class

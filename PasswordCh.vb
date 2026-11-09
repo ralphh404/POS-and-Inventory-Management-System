@@ -35,13 +35,9 @@ Public Class PasswordCh
     End Sub
 
     Private Sub btnUpdate_Click(sender As Object, e As EventArgs) Handles btnUpdate.Click
-        If MessageBox.Show("Reset this user's password?", "Confirm",
-                   MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then
-            Exit Sub
-        End If
 
-        If txtNewPass.Text <> txtConfirmPass.Text Then
-            MessageBox.Show("New passwords do not match.")
+        If MessageBox.Show("Reset this user's password?", "Confirm",
+        MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then
             Exit Sub
         End If
 
@@ -50,27 +46,47 @@ Public Class PasswordCh
             Exit Sub
         End If
 
+        If txtNewPass.Text.Length < 8 Then
+            MessageBox.Show("Password must be at least 8 characters long.",
+                    "Weak Password",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning)
+            txtNewPass.Focus()
+            Exit Sub
+        End If
+
+        If txtNewPass.Text <> txtConfirmPass.Text Then
+            MessageBox.Show("New passwords do not match.")
+            Exit Sub
+        End If
+
         Try
             Connect()
 
-            Dim cmd As New MySqlCommand("
-            UPDATE usersPOS 
-            SET Password = @newpass 
-            WHERE Username = @user", conn)
+            Dim query As String =
+            "UPDATE usersPOS SET Password = @newpass WHERE Username = @user"
 
-            cmd.Parameters.AddWithValue("@newpass", txtNewPass.Text)
-            cmd.Parameters.AddWithValue("@user", txtUsername.Text)
+            Using cmd As New MySqlCommand(query, conn)
 
-            Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
+                cmd.Parameters.AddWithValue("@newpass",
+                PasswordHelper.HashPassword(txtNewPass.Text))
 
-            If rowsAffected > 0 Then
-                MessageBox.Show("Password reset successfully.")
-            Else
-                MessageBox.Show("User not found.")
-            End If
+                cmd.Parameters.AddWithValue("@user", txtUsername.Text)
+
+                Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
+
+                If rowsAffected > 0 Then
+                    MessageBox.Show("Password reset successfully.")
+                Else
+                    MessageBox.Show("User not found.")
+                    Exit Sub
+                End If
+
+            End Using
 
         Catch ex As Exception
             MessageBox.Show("Error: " & ex.Message)
+            Exit Sub
         Finally
             Disconnect()
         End Try
@@ -80,6 +96,7 @@ Public Class PasswordCh
         End If
 
         Me.Close()
+
     End Sub
 
     Private Sub btnCancel_Click(sender As Object, e As EventArgs) Handles btnCancel.Click

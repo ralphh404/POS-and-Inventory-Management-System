@@ -42,17 +42,10 @@ Public Class frmAccounts
         Try
             Connect()
 
-            Dim query As String = "SELECT id, Username, AccountType, Password FROM usersPOS WHERE is_Archived = 0"
+            Dim query As String = "SELECT id, Username, AccountType, CASE WHEN Password IS NOT NULL AND Password <> '' THEN '•••••••' ELSE '' END AS Password FROM usersPOS WHERE is_Archived = 0"
             Dim adapter As New MySqlDataAdapter(query, conn)
             Dim dt As New DataTable()
             adapter.Fill(dt)
-
-            ' Mask password column
-            For Each row As DataRow In dt.Rows
-                If row("Password") IsNot Nothing AndAlso row("Password").ToString() <> "" Then
-                    row("Password") = "•••••••"
-                End If
-            Next
 
             dbAccounts.DataSource = dt
             If dbAccounts.Columns.Contains("id") Then
@@ -70,10 +63,12 @@ Public Class frmAccounts
         Try
             Connect()
 
-            Dim query As String = "SELECT id, Username, AccountType, Password 
-                               FROM usersPOS 
-                               WHERE is_Archived = 0 
-                               AND (Username LIKE @search OR AccountType LIKE @search)"
+            Dim query As String = "SELECT id, Username, AccountType,
+                       CASE WHEN Password IS NOT NULL AND Password <> ''
+                       THEN '•••••••' ELSE '' END AS Password
+                       FROM usersPOS
+                       WHERE is_Archived = 0
+                       AND (Username LIKE @search OR AccountType LIKE @search)"
 
             Dim cmd As New MySqlCommand(query, conn)
             cmd.Parameters.AddWithValue("@search", "%" & keyword & "%")
@@ -81,12 +76,6 @@ Public Class frmAccounts
             Dim adapter As New MySqlDataAdapter(cmd)
             Dim dt As New DataTable()
             adapter.Fill(dt)
-
-            For Each row As DataRow In dt.Rows
-                If row("Password") IsNot Nothing AndAlso row("Password").ToString() <> "" Then
-                    row("Password") = "•••••••"
-                End If
-            Next
 
             dbAccounts.DataSource = dt
             If dbAccounts.Columns.Contains("id") Then
